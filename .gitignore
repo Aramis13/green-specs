@@ -258,3 +258,4 @@ test/
 .idea/sbt.xml
 .idea/thriftCompiler.xml
 .idea/vcs.xml
+server/package-lock.json

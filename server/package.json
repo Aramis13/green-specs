@@ -1,0 +1,39 @@
+{
+  "name": "green-server",
+  "version": "0.1.0",
+  "description": "",
+  "engines": {
+    "node": ">=7.6.0"
+  },
+  "main": "src/app.js",
+  "scripts": {
+    "start": "NODE_ENV=development babel-node app/index.js",
+    "test": "mocha -t 100000 test/*.test.js",
+    "test:g": "mocha -t 100000 -g",
+    "eslint": "eslint ./src ./test ./helpers"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "config": "^3.1.0",
+    "eslint": "^5.15.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0",
+    "express": "^4.16.4",
+    "moment": "^2.23.0",
+    "moment-timezone": "^0.5.23",
+    "morgan": "^1.9.1",
+    "node-fetch": "^1.7.3",
+    "nodemailer": "^4.1.0",
+    "request": "^2.88.0",
+    "superagent": "^3.1.0",
+    "tracer": "^0.9.8"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "mocha": "^3.2.0"
+  }
+}
