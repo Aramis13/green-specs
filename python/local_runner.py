@@ -5,29 +5,46 @@ import glob
 import numpy as np
 import algo
 
+
 # global variable to keep track of
-show = True
+# show = True
 
 
-def _onTrackbarActivity(x):
-    global show
-    show = True
-    pass
+class Controller(object):
+    def __init__(self, paths):
+        self.paths = paths
+        self.image_index = 0
+        self._show = True
+        self.current_image = cv2.imread(self.get_current_path())
+
+    def get_current_path(self):
+        return self.paths[self.image_index]
+
+    def set_paths(self, paths):
+        self.paths = paths
+
+    def change_image(self, i):
+        self.image_index += i
+        self.image_index = self.image_index % len(self.paths)
+        self.current_image = cv2.imread(self.get_current_path())
+        self._show = True
+
+    def get_current_image(self):
+        return self.current_image.copy()
+
+    def on_change(self, x):
+        self._show = True
+
+    def is_showing(self):
+        if self._show is True:
+            self._show = False
+            return True
+
+        else:
+            return False
 
 
-def _reload(i):
-    global show
-    show = True
-    original = cv2.imread(files[i % len(files)])
-    original = cv2.resize(original, (rsize, rsize))
-    return original.copy()
-
-
-def main():
-    assert num_ranges > 0
-
-    global show
-
+def show_trackers(controller, params, num_ranges=3):
     orig_window_name = 'P-> Previous, N-> Next'
 
     # creating windows to display images
@@ -35,23 +52,20 @@ def main():
     # cv2.namedWindow('Select', cv2.WINDOW_AUTOSIZE) # Fix the image size
 
     # creating trackbars to get values
-    cv2.createTrackbar(f'Alpha', orig_window_name, 70, 100, _onTrackbarActivity)
-    cv2.createTrackbar(f'Kernel', orig_window_name, 5, 50, _onTrackbarActivity)
-    cv2.createTrackbar(f'Iterations', orig_window_name, 2, 10, _onTrackbarActivity)
+    cv2.createTrackbar(f'Alpha', orig_window_name, 70, 100, controller.on_change)
+    cv2.createTrackbar(f'Kernel', orig_window_name, 5, 50, controller.on_change)
+    cv2.createTrackbar(f'Iterations', orig_window_name, 2, 10, controller.on_change)
 
     for color_num in range(num_ranges - 1):
         color_num += 1
         val = 255 * color_num // num_ranges
-        cv2.createTrackbar(f'Color {color_num}', orig_window_name, val, 255, _onTrackbarActivity)
+        cv2.createTrackbar(f'Color {color_num}', orig_window_name, val, 255, controller.on_change)
 
     # Show all images
-    i = 0
-    original = _reload(i)
     while (1):
 
-        if show:  # If there is any event on the trackbar
-            show = False
-
+        if controller.is_showing():
+            # If there is any event on the trackbar
             params["kernel_size"] = cv2.getTrackbarPos(f'Kernel', orig_window_name)
             params["iterations"] = cv2.getTrackbarPos(f'Iterations', orig_window_name)
 
@@ -60,23 +74,22 @@ def main():
                 color_num += 1
                 vals.append(cv2.getTrackbarPos(f'Color {color_num}', orig_window_name))
             vals.append(255)
-            image_mask_colored_all = algo.convert_image(original, vals)
+            params["vals"] = vals
+            image_mask_colored_all = algo.get_region_image_from_image(controller.get_current_path(), **params)
 
             # apply the overlay
             a = cv2.getTrackbarPos(f'Alpha', orig_window_name)
             alpha = a / 100
-            output = cv2.addWeighted(cv2.cvtColor(image_mask_colored_all, cv2.COLOR_GRAY2RGB), alpha, original, 1 - alpha, 0)
+            output = cv2.addWeighted(cv2.cvtColor(image_mask_colored_all, cv2.COLOR_GRAY2RGB), alpha, controller.get_current_image(), 1 - alpha, 0)
 
         cv2.imshow(orig_window_name, output)  # Show the results
         k = cv2.waitKey(1) & 0xFF
         # check next image in folder
         if k == ord('n'):
-            i += 1
-            original = _reload(i)
+            controller.change_image(1)
         # check previous image in folder
         elif k == ord('p'):
-            i -= 1
-            original = _reload(i)
+            controller.change_image(-1)
         # Close all windows when 'esc' key is pressed
         elif k == 27:
             break
@@ -84,16 +97,11 @@ def main():
     cv2.destroyAllWindows()
 
 
-if __name__ == '__main__':
+def main():
     # Get the filename from the command line
     files = glob.glob('../../data/raw/*.jpeg')
     files.sort()
-
-    # Resize the image
-    rsize = 950
-
-    # Number of different color ranges
-    num_ranges = 3
+    controller = Controller(files)
 
     # cv2.COLOR_BGR2LAB,
     # L – Lightness ( Intensity ).
@@ -114,4 +122,8 @@ if __name__ == '__main__':
     params = {"channel_num": 0, "color_space": cv2.COLOR_BGR2YCrCb, }  # 0 for Y in YCrCb
     params = {"channel_num": 2, "color_space": cv2.COLOR_BGR2HSV, }  # 2 for V in HSV
 
+    show_trackers(controller, params)
+
+
+if __name__ == '__main__':
     main()

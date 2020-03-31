@@ -2,7 +2,9 @@ import cv2
 import numpy as np
 
 
-def convert_image(original, vals, channel_num=0, color_space=cv2.COLOR_BGR2LAB, iterations=1, kernel_size=5):
+def get_region_image_from_image(image_path, vals=(0, 85, 170, 255), channel_num=0, color_space=cv2.COLOR_BGR2LAB, iterations=1, kernel_size=5):
+    original = cv2.imread(image_path)
+
     kernel = np.ones((kernel_size, kernel_size), np.uint8)
 
     image_mask_colored_all = np.zeros(original.shape[:2], dtype=np.uint8)
@@ -26,4 +28,5 @@ def convert_image(original, vals, channel_num=0, color_space=cv2.COLOR_BGR2LAB, 
 
     image_mask_colored_all = cv2.dilate(image_mask_colored_all, kernel, iterations=iterations)
     image_mask_colored_all = cv2.erode(image_mask_colored_all, kernel, iterations=iterations)
+
     return image_mask_colored_all
