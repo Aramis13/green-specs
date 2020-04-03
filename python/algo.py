@@ -2,31 +2,46 @@ import cv2
 import numpy as np
 
 
-def get_region_image_from_image(image_path, vals=(0, 85, 170, 255), channel_num=0, color_space=cv2.COLOR_BGR2LAB, iterations=1, kernel_size=5):
+def get_region_image_from_image(
+        image_path,
+        vals=(0, 85, 170, 255),
+        channel_num=0,
+        color_space=cv2.COLOR_BGR2LAB,
+        blur_size=21,
+        number_contours=(3, 1, 3)):
+    # Load the image from the given path
     original = cv2.imread(image_path)
 
-    kernel = np.ones((kernel_size, kernel_size), np.uint8)
+    # Convert the BGR image to the given color spaces and extract the selected channel
+    channel_image = cv2.cvtColor(original, color_space)[:, :, channel_num]
 
-    image_mask_colored_all = np.zeros(original.shape[:2], dtype=np.uint8)
-    # Get values from the trackbar
+    # Blur the image to make the ranges smoother
+    smoothed_image = cv2.GaussianBlur(channel_image, ksize=(blur_size * 2 + 1, blur_size * 2 + 1), sigmaX=0)
+
+    # Find contours on the smoothed image
+    all_contours = []
     for color_num in range(len(vals) - 1):
+        layer_color = 255 // (len(vals) - 2) * color_num
+
         channel_min_value = vals[color_num]
         channel_max_value = vals[color_num + 1]
 
-        # Convert the BGR image to other color spaces
-        image_converted = cv2.cvtColor(original, color_space)
-
         # Create the mask using the min and max values obtained from trackbar and apply bitwise and operation to get the results
+        image_mask = cv2.inRange(smoothed_image, channel_min_value, channel_max_value)
 
-        image_mask = cv2.inRange(image_converted[:, :, channel_num], channel_min_value, channel_max_value)
-        image_mask_colored = image_mask // (len(vals) - 2) * color_num
+        # # find contours in thresholded image, then keep only the largest
+        cnts = cv2.findContours(image_mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        if len(cnts[0]) > 0:
+            layer_contours = sorted(cnts[0], key=cv2.contourArea, reverse=True)
+            layer_contours = layer_contours[:number_contours[color_num]]
+            for cnt in layer_contours:
+                # all_contours.append((layer_color, cnt))
 
-        # image_mask_colored = cv2.dilate(image_mask_colored, kernel, iterations=iterations)
-        # image_mask_colored = cv2.erode(image_mask_colored, kernel, iterations=iterations)
+                hull = cv2.convexHull(cnt)
+                all_contours.append((layer_color, hull))
 
-        image_mask_colored_all = cv2.bitwise_or(image_mask_colored_all, image_mask_colored)
+                # epsilon = 0.01 * cv2.arcLength(cnt, True)
+                # approx = cv2.approxPolyDP(cnt, epsilon, True)
+                # all_contours.append((layer_color, approx))
 
-    image_mask_colored_all = cv2.dilate(image_mask_colored_all, kernel, iterations=iterations)
-    image_mask_colored_all = cv2.erode(image_mask_colored_all, kernel, iterations=iterations)
-
-    return image_mask_colored_all
+    return all_contours

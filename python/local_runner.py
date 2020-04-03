@@ -44,6 +44,10 @@ class Controller(object):
             return False
 
 
+def _get_contour_area_in_tuple(item):
+    return cv2.contourArea(item[1])
+
+
 def show_trackers(controller, params, num_ranges=3):
     orig_window_name = 'P-> Previous, N-> Next'
 
@@ -53,34 +57,44 @@ def show_trackers(controller, params, num_ranges=3):
 
     # creating trackbars to get values
     cv2.createTrackbar(f'Alpha', orig_window_name, 70, 100, controller.on_change)
-    cv2.createTrackbar(f'Kernel', orig_window_name, 5, 50, controller.on_change)
-    cv2.createTrackbar(f'Iterations', orig_window_name, 2, 10, controller.on_change)
+    cv2.createTrackbar(f'blur_size', orig_window_name, 5, 50, controller.on_change)
 
-    for color_num in range(num_ranges - 1):
-        color_num += 1
+    for color_num in range(1, num_ranges):
         val = 255 * color_num // num_ranges
         cv2.createTrackbar(f'Color {color_num}', orig_window_name, val, 255, controller.on_change)
+
+    for color_num in range(num_ranges):
+        cv2.createTrackbar(f'Contour {color_num}', orig_window_name, 3, 10, controller.on_change)
 
     # Show all images
     while (1):
 
         if controller.is_showing():
             # If there is any event on the trackbar
-            params["kernel_size"] = cv2.getTrackbarPos(f'Kernel', orig_window_name)
-            params["iterations"] = cv2.getTrackbarPos(f'Iterations', orig_window_name)
+            params["blur_size"] = cv2.getTrackbarPos(f'blur_size', orig_window_name)
 
             vals = [0]
+            params["number_contours"] = [cv2.getTrackbarPos(f'Contour {0}', orig_window_name)]
             for color_num in range(num_ranges - 1):
                 color_num += 1
                 vals.append(cv2.getTrackbarPos(f'Color {color_num}', orig_window_name))
+                params["number_contours"].append(cv2.getTrackbarPos(f'Contour {color_num}', orig_window_name))
             vals.append(255)
             params["vals"] = vals
-            image_mask_colored_all = algo.get_region_image_from_image(controller.get_current_path(), **params)
+
+            image_path = controller.get_current_path()
+            all_contours = algo.get_region_image_from_image(image_path, **params)
+            original = cv2.imread(image_path)
+
+            contours_image = np.zeros(original.shape[:2], dtype=np.uint8)
+            sorted_contours = sorted(all_contours, key=_get_contour_area_in_tuple, reverse=True)
+            for color, contour in sorted_contours:
+                cv2.fillPoly(contours_image, pts=[contour], color=(color, color, color))
 
             # apply the overlay
             a = cv2.getTrackbarPos(f'Alpha', orig_window_name)
             alpha = a / 100
-            output = cv2.addWeighted(cv2.cvtColor(image_mask_colored_all, cv2.COLOR_GRAY2RGB), alpha, controller.get_current_image(), 1 - alpha, 0)
+            output = cv2.addWeighted(cv2.cvtColor(contours_image, cv2.COLOR_GRAY2RGB), alpha, controller.get_current_image(), 1 - alpha, 0)
 
         cv2.imshow(orig_window_name, output)  # Show the results
         k = cv2.waitKey(1) & 0xFF
