@@ -16,6 +16,7 @@
 <script>
 import Vue from "vue";
 import Axios from "axios";
+import Firebase from "firebase";
 export default Vue.extend({
   data: () => ({
     picture: "",
@@ -24,31 +25,30 @@ export default Vue.extend({
   methods: {
     Upload(image) {
       this.loading = true;
-      const fr = new FileReader();
 
-      fr.readAsDataURL(image);
-
-      fr.onload = e => {
-        if (e == null || e.target == null) return;
-        this.picture = e.target.result;
-      };
-
-      const formData = new FormData();
-      formData.append("image", image, image.name);
-      Axios.post("/healthcheck", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data"
+      const storageRef = Firebase.storage()
+        .ref(image.name)
+        .put(image);
+      storageRef.on(
+        `state_changed`,
+        snapshot => {
+          console.log((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        },
+        error => {
+          console.log(error.message);
+        },
+        () => {
+          console.log(100);
+          storageRef.snapshot.ref.getDownloadURL().then(url => {
+            this.picture = url;
+            this.loading = false;
+            // Send url to server
+            Axios.post("/api/image", {
+              url: url
+            });
+          });
         }
-      })
-        .then(response => {
-          console.log(response.data);
-        })
-        .catch(e => {
-          console.log(e);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+      );
     }
   }
 });
