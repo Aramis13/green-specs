@@ -25,7 +25,8 @@
 <script>
 import Vue from "vue";
 // import Axios from "axios";
-import Firebase from "firebase";
+import * as firebase from "firebase/app";
+import 'firebase/storage'
 export default Vue.extend({
   data: () => ({
     picture: "",
@@ -42,7 +43,7 @@ export default Vue.extend({
     Upload(image) {
       this.showProgress = true;
 
-      const storageRef = Firebase.storage()
+      const storageRef = firebase.storage()
         .ref(image.name)
         .put(image);
       storageRef.on(
