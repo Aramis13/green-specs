@@ -13,9 +13,18 @@ router.get('/healthcheck', function (req, res) {
 });
 
 router.get('/analyze', function (req, res) {
-    const picUrl = req.query.pic_url;
     const id = req.query.id;
+    const picUrl = req.query.pic_url;
+    handleAnalyzeRequest(res, id, picUrl)
+});
 
+router.post('/analyze', function (req, res) {
+    const id = req.body.id;
+    const picUrl = req.body.pic_url;
+    handleAnalyzeRequest(res, id, picUrl)
+});
+
+function handleAnalyzeRequest(res, id, picUrl) {
     if (!id) res.json("Missing id param");
     else if (!picUrl) res.json("Missing pic_url param");
     else {
@@ -39,7 +48,6 @@ router.get('/analyze', function (req, res) {
         });
 
     }
-
-});
+};
 
 export default router;
