@@ -7,18 +7,10 @@ import vuetify from "./plugins/vuetify";
 import firebase from "firebase";
 
 // Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyBMHdDgObwlQcox8LSMG4eaqn21xkcU0fQ",
-  authDomain: "green-specs.firebaseapp.com",
-  databaseURL: "https://green-specs.firebaseio.com",
-  projectId: "green-specs",
-  storageBucket: "green-specs.appspot.com",
-  messagingSenderId: "287869015941",
-  appId: "1:287869015941:web:4dafc960683103c43316ec",
-  measurementId: "G-PFWWSNGN7K"
-};
+const firebaseConfig = process.env.VUE_APP_FIREBASECONFIG;
+
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(JSON.parse(firebaseConfig));
 firebase.analytics();
 
 Vue.config.productionTip = false;
