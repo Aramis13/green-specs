@@ -80,7 +80,7 @@ def show_trackers(controller, params, num_ranges=3):
             current_image = controller.get_current_image()
             contours_image = np.zeros(current_image.shape[:2], dtype=np.uint8)
             for color, contour in sorted_contours:
-                cv2.fillPoly(contours_image, pts=[contour], color=(color, color, color))
+                cv2.fillPoly(contours_image, pts=[np.array(contour)], color=(color, color, color))
 
             # apply the overlay
             a = cv2.getTrackbarPos(f'Alpha', orig_window_name)

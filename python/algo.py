@@ -52,8 +52,13 @@ def get_region_image_from_image(
     sorted_contours = sorted(all_contours, key=_get_contour_area_in_tuple, reverse=True)
     sorted_contours = sorted_contours[:num_contours]
 
-    print(sorted_contours)
-    return sorted_contours
+    # Convert to list for easier sending via requests
+    contours_to_return = []
+    for (layer_color, hull) in sorted_contours:
+        contours_to_return.append([layer_color, hull.tolist()])
+
+    print(contours_to_return)
+    return contours_to_return
 
 
 if __name__== "__main__":
