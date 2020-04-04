@@ -22,28 +22,29 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import Vue from "vue";
 // import Axios from "axios";
 import * as firebase from "firebase/app";
-import 'firebase/storage'
+import "firebase/storage";
 export default Vue.extend({
   data: () => ({
-    picture: "",
-    progress: 0,
-    showProgress: false,
-    url: null
+    picture: "" as string,
+    progress: 0 as number,
+    showProgress: false as boolean,
+    url: null as null | string
   }),
   computed: {
-    Progress() {
+    Progress(): number {
       return Math.round(this.progress);
     }
   },
   methods: {
-    Upload(image) {
+    Upload(image: File): void {
       this.showProgress = true;
 
-      const storageRef = firebase.storage()
+      const storageRef = firebase
+        .storage()
         .ref(image.name)
         .put(image);
       storageRef.on(
