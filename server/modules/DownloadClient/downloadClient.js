@@ -1,7 +1,7 @@
 const fs = require('fs');
 const request = require('request');
 
-export class Downloader {
+export class DownloadClient {
     constructor(path) {
         this.savePath = path;
     }

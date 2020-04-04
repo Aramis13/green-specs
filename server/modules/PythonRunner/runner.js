@@ -1,6 +1,6 @@
 const {spawn} = require('child_process');
 
-export class PythonRunner {
+export class Runner {
     run(pathToScript, callback) {
         let returnedValue;
         const python = spawn('python', ['mocks/mock_script.py', 'arg1', 'arg2']);
