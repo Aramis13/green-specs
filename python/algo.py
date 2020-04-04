@@ -1,3 +1,5 @@
+import sys
+
 import cv2
 
 
@@ -50,4 +52,9 @@ def get_region_image_from_image(
     sorted_contours = sorted(all_contours, key=_get_contour_area_in_tuple, reverse=True)
     sorted_contours = sorted_contours[:num_contours]
 
+    print(sorted_contours)
     return sorted_contours
+
+
+if __name__== "__main__":
+    get_region_image_from_image(sys.argv[1])
