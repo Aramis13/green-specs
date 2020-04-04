@@ -1,5 +1,8 @@
 import cv2
-import numpy as np
+
+
+def _get_contour_area_in_tuple(item):
+    return cv2.contourArea(item[1])
 
 
 def get_region_image_from_image(
@@ -8,7 +11,7 @@ def get_region_image_from_image(
         channel_num=0,
         color_space=cv2.COLOR_BGR2LAB,
         blur_size=21,
-        number_contours=(3, 1, 3)):
+        num_contours=8):
     # Load the image from the given path
     original = cv2.imread(image_path)
 
@@ -33,7 +36,7 @@ def get_region_image_from_image(
         cnts = cv2.findContours(image_mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         if len(cnts[0]) > 0:
             layer_contours = sorted(cnts[0], key=cv2.contourArea, reverse=True)
-            layer_contours = layer_contours[:number_contours[color_num]]
+            layer_contours = layer_contours[:num_contours]
             for cnt in layer_contours:
                 # all_contours.append((layer_color, cnt))
 
@@ -44,4 +47,7 @@ def get_region_image_from_image(
                 # approx = cv2.approxPolyDP(cnt, epsilon, True)
                 # all_contours.append((layer_color, approx))
 
-    return all_contours
+    sorted_contours = sorted(all_contours, key=_get_contour_area_in_tuple, reverse=True)
+    sorted_contours = sorted_contours[:num_contours]
+
+    return sorted_contours
