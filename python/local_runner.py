@@ -74,10 +74,10 @@ def show_trackers(controller, params, num_ranges=3):
             vals.append(255)
             params["vals"] = vals
 
-            image_path = controller.get_current_path()
-            sorted_contours = algo.get_region_image_from_image(image_path, **params)
-
+            # image_path = controller.get_current_path()
             current_image = controller.get_current_image()
+            sorted_contours = algo.get_region_image_from_image(current_image, **params)
+
             contours_image = np.zeros(current_image.shape[:2], dtype=np.uint8)
             for color, contour in sorted_contours:
                 cv2.fillPoly(contours_image, pts=[np.array(contour)], color=(color, color, color))
