@@ -95,7 +95,7 @@ export default Vue.extend({
             this.picture = url;
             this.url = url;
             this.showProgress = false;
-            Axios.post("http://3.93.212.180/analyze", {
+            Axios.post(`${process.env.VUE_APP_SERVER_URL}/analyze`, {
               id: 1,
               // eslint-disable-next-line @typescript-eslint/camelcase
               pic_url: url
