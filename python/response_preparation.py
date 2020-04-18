@@ -1,14 +1,14 @@
 def convert_to_svg(sorted_contours):
     # https://www.w3schools.com/graphics/svg_path.asp
     svg_paths = []
-    for shape_type, contour in sorted_contours:
+    for idx, (shape_type, contour) in enumerate(sorted_contours):
         _str_build = 'M'
         for point in contour:
             _str_build += f'{point[0][0]} {point[0][1]} L'
 
         _str_build = _str_build[:-1] + 'Z'
-        svg_str = f'<path d="{_str_build}" stroke="#00ff00" stroke-width="3" fill="#{shape_type}"/>'
-        svg_paths.append(svg_str)
+        path_obj = {"d":_str_build, "type":shape_type}
+        svg_paths.append(path_obj)
 
     return svg_paths
 

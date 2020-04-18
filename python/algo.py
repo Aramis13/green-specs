@@ -2,6 +2,12 @@ import sys
 
 import cv2
 
+colors_types = {
+    0: "Low",
+    1: "Medium",
+    2: "High"
+}
+
 
 def _get_contour_area_in_tuple(item):
     return cv2.contourArea(item[1])
@@ -26,8 +32,7 @@ def get_region_image_from_image(
     # Find contours on the smoothed image
     all_contours = []
     for color_num in range(len(vals) - 1):
-        layer_color = int(255 / (len(vals) - 2) * color_num)
-        layer_color_hexa = f'{layer_color:02x}'*3
+        layer_color_type = colors_types[color_num]
 
         channel_min_value = vals[color_num]
         channel_max_value = vals[color_num + 1]
@@ -44,7 +49,7 @@ def get_region_image_from_image(
                 # all_contours.append((layer_color_hexa, cnt))
 
                 hull = cv2.convexHull(cnt)
-                all_contours.append((layer_color_hexa, hull))
+                all_contours.append((layer_color_type, hull))
 
                 # epsilon = 0.001 * cv2.arcLength(cnt, True)
                 # approx = cv2.approxPolyDP(cnt, epsilon, True)
@@ -62,5 +67,5 @@ def get_region_image_from_image(
     return contours_to_return
 
 
-if __name__== "__main__":
+if __name__ == "__main__":
     get_region_image_from_image(sys.argv[1])
