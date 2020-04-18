@@ -5,7 +5,7 @@ import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
 import * as firebase from "firebase/app";
-import "firebase/analytics"
+import "firebase/analytics";
 
 // Your web app's Firebase configuration
 const firebaseConfig = process.env.VUE_APP_FIREBASECONFIG;
