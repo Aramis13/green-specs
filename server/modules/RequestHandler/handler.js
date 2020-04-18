@@ -13,10 +13,10 @@ export class RequestHandler {
                 // let re = new RegExp(/<svg.*<\/svg>/, 'gms') ;
                 // const rawSvg = response.data.match(re)[0];
                 // const svg = parse(rawSvg);
-                // console.log(rest);
+                // console.log(response.data);
                 // const paths = rest.forEach(path  => parseSvgPath(path));
 
-                res.json(response);
+                res.send(response.data);
             }).catch(error => {
                 console.log(error);
             });
