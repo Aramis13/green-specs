@@ -17,19 +17,36 @@
         >{{ Progress }}</v-progress-circular
       >
     </v-layout>
-    <v-img :src="picture"></v-img>
+    <svg v-if="url != null" height="100%" width="100%" viewBox="0 0 1599 1200">
+      <image height="100%" width="100%" :xlink:href="url"></image>
+      <path
+        v-for="(path, index) in paths"
+        :key="index"
+        :d="path.d"
+        :class="GetClass(path.type)"
+        @click="OpenDialog(path.type)"
+      />
+    </svg>
     <v-label v-if="url != null">{{ url }}</v-label>
+    <plants-list-modal :dialog="dialog" :type="selectedType" />
   </v-container>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-// import Axios from "axios";
+import Axios from "axios";
 import * as firebase from "firebase/app";
 import "firebase/storage";
+import PlantsListModal from "./PlantsListModal.vue";
 export default Vue.extend({
+  components: {
+    PlantsListModal
+  },
   data: () => ({
+    dialog: false as boolean,
+    selectedType: null as null | string,
     picture: "" as string,
+    paths: [] as Array<object>,
     progress: 0 as number,
     showProgress: false as boolean,
     url: null as null | string
@@ -40,6 +57,22 @@ export default Vue.extend({
     }
   },
   methods: {
+    OpenDialog(type: string): void {
+      this.selectedType = type;
+      this.dialog = true;
+    },
+    GetClass(type: string): string {
+      switch (type) {
+        case "Low":
+          return "path-low";
+        case "Medium":
+          return "path-med";
+        case "High":
+          return "path-high";
+        default:
+          return "path-med";
+      }
+    },
     Upload(image: File): void {
       this.showProgress = true;
 
@@ -62,7 +95,11 @@ export default Vue.extend({
             this.picture = url;
             this.url = url;
             this.showProgress = false;
-            // Send url to server
+            Axios.post("http://3.93.212.180/analyze", {
+              id: 1,
+              // eslint-disable-next-line @typescript-eslint/camelcase
+              pic_url: url
+            }).then(response => (this.paths = response.data));
           });
         }
       );
@@ -71,4 +108,35 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+path {
+  fill: transparent;
+  transition: 1s;
+  stroke-width: 1;
+  opacity: 1;
+  cursor: pointer;
+}
+
+.path-low {
+  stroke: darkgreen;
+}
+.path-med {
+  stroke: green;
+}
+.path-high {
+  stroke: lightgreen;
+}
+
+.path-low:hover {
+  fill: darkgreen;
+  opacity: 0.7;
+}
+.path-med:hover {
+  fill: green;
+  opacity: 0.7;
+}
+.path-high:hover {
+  fill: lightgreen;
+  opacity: 0.7;
+}
+</style>
