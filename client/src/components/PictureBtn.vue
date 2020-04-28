@@ -28,7 +28,7 @@
       />
     </svg>
     <v-label v-if="url != null">{{ url }}</v-label>
-    <plants-list-modal :dialog="dialog" :type="selectedType" />
+    <plants-list-modal :dialog="dialog" :type="selectedType" :plants="plants" />
   </v-container>
 </template>
 
@@ -49,8 +49,14 @@ export default Vue.extend({
     paths: [] as Array<object>,
     progress: 0 as number,
     showProgress: false as boolean,
-    url: null as null | string
+    url: null as null | string,
+    plants: null as null | Array<object>
   }),
+  created() {
+    this.$root.$on("CloseDialog", () => {
+      this.dialog = false;
+    });
+  },
   computed: {
     Progress(): number {
       return Math.round(this.progress);
@@ -73,9 +79,17 @@ export default Vue.extend({
           return "path-med";
       }
     },
+    Clear(): void {
+      this.selectedType = null;
+      this.picture = "";
+      this.paths = [];
+      this.progress = 0;
+      this.url = null;
+      this.plants = null;
+    },
     Upload(image: File): void {
+      this.Clear();
       this.showProgress = true;
-
       const storageRef = firebase
         .storage()
         .ref(image.name)
@@ -99,7 +113,10 @@ export default Vue.extend({
               id: 1,
               // eslint-disable-next-line @typescript-eslint/camelcase
               pic_url: url
-            }).then(response => (this.paths = response.data));
+            }).then(response => {
+              this.paths = response.data.svg;
+              this.plants = response.data.plants;
+            });
           });
         }
       );
