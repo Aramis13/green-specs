@@ -2,7 +2,6 @@
   "baseUrl": "http://127.0.0.1:8080",
   "host": "127.0.0.1",
   "port": 8080,
-  "securePort": 8443,
   "firebaseConfig": {
     "apiKey": "AIzaSyAPovqlMp09bEWKeiFt04D4Cg8bisyqVGQ",
     "authDomain": "green-specs-50ad2.firebaseapp.com",
