@@ -1,5 +1,86 @@
 <template>
-  <v-dialog v-model="dialog" fullscreen>
+  <v-dialog v-model="dialog" fullscreen dark no-click-animation>
+    <v-card class="hide-overflow">
+      <v-list-item>
+        <v-list-item-content>
+          <v-list-item-title class="headline">{{
+            plants[plantIndex].nickname
+          }}</v-list-item-title>
+          <v-list-item-subtitle>{{
+            plants[plantIndex].Name
+          }}</v-list-item-subtitle>
+        </v-list-item-content>
+        <v-list-item-action>
+          <v-btn icon @click="Close"
+            ><v-icon>mdi-close</v-icon></v-btn
+          ></v-list-item-action
+        >
+      </v-list-item>
+
+      <v-carousel hide-delimiters @change="PlantChange">
+        <v-carousel-item v-for="(plant, index) in dummyPlants" :key="index">
+          <v-img :src="plant" width="100%" height="100%"></v-img>
+        </v-carousel-item>
+      </v-carousel>
+
+      <v-card-actions>
+        <v-list>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title
+                class="title"
+                v-text="'Involvement:'"
+              ></v-list-item-title>
+            </v-list-item-content>
+            <v-list-item-action
+              ><v-rating
+                background-color="secondary"
+                full-icon="mdi-shovel"
+                empty-icon="mdi-shovel"
+                value="3"
+              ></v-rating
+            ></v-list-item-action>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title
+                class="title"
+                v-text="'Size:'"
+              ></v-list-item-title>
+            </v-list-item-content>
+            <v-list-item-action
+              ><v-rating
+                color="accent"
+                background-color="secondary"
+                full-icon="mdi-tree"
+                empty-icon="mdi-tree-outline"
+                value="1"
+              ></v-rating
+            ></v-list-item-action>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title
+                class="title"
+                v-text="'Price:'"
+              ></v-list-item-title>
+            </v-list-item-content>
+            <v-list-item-action
+              ><v-rating
+                color="green darken-2"
+                background-color="secondary"
+                full-icon="mdi-currency-usd-circle"
+                empty-icon="mdi-currency-usd-circle-outline"
+                value="4"
+              ></v-rating
+            ></v-list-item-action>
+          </v-list-item>
+        </v-list>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- <v-dialog v-model="dialog" fullscreen>
     <v-card class="hide-overflow">
       <v-card-title class="headline"
         >Plants In Category - {{ type }}<v-spacer /><v-btn icon @click="Close"
@@ -9,7 +90,7 @@
       <v-divider />
       <v-card-text>
         <v-row>
-          <v-col cols="5">
+          <v-col cols="7">
             <v-carousel hide-delimiters @change="PlantChange">
               <v-carousel-item
                 v-for="(plant, index) in dummyPlants"
@@ -49,7 +130,7 @@
         </v-row>
       </v-card-text>
     </v-card>
-  </v-dialog>
+  </v-dialog> -->
 </template>
 
 <script lang="ts">

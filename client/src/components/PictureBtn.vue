@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <v-file-input
+  <v-row align="center" justify="center">
+    <!-- <v-file-input
       show-size
       accept="image/*"
       label="Take Picture"
@@ -16,9 +16,54 @@
         :value="progress"
         >{{ Progress }}</v-progress-circular
       >
-    </v-layout>
-    <svg v-if="url != null" height="100%" width="100%" viewBox="0 0 1599 1200">
-      <image height="100%" width="100%" :xlink:href="url"></image>
+    </v-layout> -->
+    <v-btn
+      @click="TakePicture"
+      fab
+      elevation="12"
+      height="250"
+      width="250"
+      outlined
+      class="green darken-4"
+      v-if="!clicked"
+    >
+      <v-icon size="200" color="white">mdi-glasses</v-icon>
+    </v-btn>
+    <input
+      type="file"
+      style="display: none"
+      ref="image"
+      accept="image/*"
+      @change="Upload"
+      v-if="!clicked"
+    />
+    <v-progress-circular
+      style="border-radius: 50%;"
+      rotate="-90"
+      class="green darken-4"
+      color="white"
+      size="250"
+      width="20"
+      :value="progress"
+      v-if="showProgress"
+    >
+      <v-icon size="200" color="white">mdi-glasses</v-icon></v-progress-circular
+    >
+    <svg
+      v-if="url != null && !showProgress"
+      height="100%"
+      width="100%"
+      :viewBox="ViewBox"
+    >
+      <image
+        preserveAspectRatio="none"
+        x="0"
+        y="0"
+        height="100%"
+        width="100%"
+        style="overflow: visible;"
+        :xlink:href="url"
+      ></image>
       <path
         v-for="(path, index) in paths"
         :key="index"
@@ -27,9 +72,13 @@
         @click="OpenDialog(path.type)"
       />
     </svg>
-    <v-label v-if="url != null">{{ url }}</v-label>
-    <plants-list-modal :dialog="dialog" :type="selectedType" :plants="plants" />
-  </v-container>
+    <plants-list-modal
+      v-if="plants != null"
+      :dialog="dialog"
+      :type="selectedType"
+      :plants="plants"
+    />
+  </v-row>
 </template>
 
 <script lang="ts">
@@ -50,7 +99,8 @@ export default Vue.extend({
     progress: 0 as number,
     showProgress: false as boolean,
     url: null as null | string,
-    plants: null as null | Array<object>
+    plants: null as null | Array<object>,
+    clicked: false as boolean
   }),
   created() {
     this.$root.$on("CloseDialog", () => {
@@ -60,9 +110,15 @@ export default Vue.extend({
   computed: {
     Progress(): number {
       return Math.round(this.progress);
+    },
+    ViewBox() {
+      return `0 0 ${screen.width} ${screen.height}`;
     }
   },
   methods: {
+    TakePicture(): void {
+      (this.$refs.image as HTMLFormElement).click();
+    },
     OpenDialog(type: string): void {
       this.selectedType = type;
       this.dialog = true;
@@ -87,8 +143,11 @@ export default Vue.extend({
       this.url = null;
       this.plants = null;
     },
-    Upload(image: File): void {
+    Upload(e: Event): void {
       this.Clear();
+      if (!e || !e.target || !(e.target as HTMLFormElement).files) return;
+      this.clicked = true;
+      const image = (e.target as HTMLFormElement).files[0];
       this.showProgress = true;
       const storageRef = firebase
         .storage()
@@ -155,5 +214,9 @@ path {
 .path-high:hover {
   fill: lightgreen;
   opacity: 0.7;
+}
+.glasses {
+  height: 210;
+  width: 210;
 }
 </style>
