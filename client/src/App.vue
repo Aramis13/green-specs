@@ -1,16 +1,17 @@
 <template>
   <v-app>
-    <v-content>
-      <v-container fluid>
-        <router-view></router-view>
-      </v-container>
-    </v-content>
+    <v-parallax src="./assets/background.jpg" class="wallpaper pa-0">
+      <v-content>
+        <v-container fill-height fluid pa-0 ma-0>
+          <router-view></router-view>
+        </v-container>
+      </v-content>
+    </v-parallax>
   </v-app>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-
 export default Vue.extend({
   name: "App",
 
@@ -19,3 +20,13 @@ export default Vue.extend({
   })
 });
 </script>
+
+<style>
+.wallpaper {
+  height: 100% !important;
+  width: inherit;
+}
+.v-parallax__content {
+  padding: 0 !important;
+}
+</style>
