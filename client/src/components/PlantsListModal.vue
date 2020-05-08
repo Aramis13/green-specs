@@ -1,7 +1,16 @@
 <template>
-  <v-dialog v-model="dialog" fullscreen dark no-click-animation>
+  <v-dialog
+    v-model="dialog"
+    :fullscreen="$vuetify.breakpoint.xs"
+    :max-width="$vuetify.breakpoint.xs ? '' : '800'"
+    dark
+    no-click-animation
+  >
     <v-card class="hide-overflow">
       <v-list-item>
+        <v-btn icon @click="Alert" class="mr-3">
+          <v-icon color="primary" large>mdi-information-outline</v-icon></v-btn
+        >
         <v-list-item-content>
           <v-list-item-title class="headline">{{
             plants[plantIndex].nickname
@@ -17,13 +26,23 @@
         >
       </v-list-item>
 
-      <v-carousel hide-delimiters @change="PlantChange">
+      <v-carousel
+        hide-delimiters
+        @change="PlantChange"
+        transition="fade-transition"
+        :height="$vuetify.breakpoint.xs ? '100%' : '500px'"
+      >
         <v-carousel-item v-for="(plant, index) in dummyPlants" :key="index">
-          <v-img :src="plant" width="100%" height="100%"></v-img>
+          <v-img
+            :src="plant"
+            width="100%"
+            height="100%"
+            :contain="$vuetify.breakpoint.xs ? false : true"
+          ></v-img>
         </v-carousel-item>
       </v-carousel>
 
-      <v-card-actions>
+      <v-card-actions class="justify-space-around">
         <v-list>
           <v-list-item>
             <v-list-item-content>
@@ -34,10 +53,12 @@
             </v-list-item-content>
             <v-list-item-action
               ><v-rating
+                color="brown"
                 background-color="secondary"
                 full-icon="mdi-shovel"
                 empty-icon="mdi-shovel"
-                value="3"
+                :value="3"
+                readonly
               ></v-rating
             ></v-list-item-action>
           </v-list-item>
@@ -54,7 +75,8 @@
                 background-color="secondary"
                 full-icon="mdi-tree"
                 empty-icon="mdi-tree-outline"
-                value="1"
+                :value="1"
+                readonly
               ></v-rating
             ></v-list-item-action>
           </v-list-item>
@@ -67,11 +89,12 @@
             </v-list-item-content>
             <v-list-item-action
               ><v-rating
-                color="green darken-2"
+                color="green darken-4"
                 background-color="secondary"
                 full-icon="mdi-currency-usd-circle"
                 empty-icon="mdi-currency-usd-circle-outline"
-                value="4"
+                :value="4"
+                readonly
               ></v-rating
             ></v-list-item-action>
           </v-list-item>
@@ -79,58 +102,6 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-
-  <!-- <v-dialog v-model="dialog" fullscreen>
-    <v-card class="hide-overflow">
-      <v-card-title class="headline"
-        >Plants In Category - {{ type }}<v-spacer /><v-btn icon @click="Close"
-          ><v-icon>mdi-close</v-icon></v-btn
-        ></v-card-title
-      >
-      <v-divider />
-      <v-card-text>
-        <v-row>
-          <v-col cols="7">
-            <v-carousel hide-delimiters @change="PlantChange">
-              <v-carousel-item
-                v-for="(plant, index) in dummyPlants"
-                :key="index"
-              >
-                <v-img :src="plant" width="100%" height="100%"></v-img>
-              </v-carousel-item>
-            </v-carousel>
-          </v-col>
-          <v-col cols="7" v-if="plants != null">
-            <v-toolbar
-              class="primary--text text-uppercase d-flex justify-center"
-              flat
-              ><v-toolbar-title class="display-1 font-weight-bold">{{
-                plants[plantIndex].Name
-              }}</v-toolbar-title></v-toolbar
-            >
-            <v-list>
-              <v-list-item
-                v-for="(info, i) in PlantInfo"
-                :key="i"
-                class="title"
-              >
-                <v-list-item-content>
-                  <v-list-item-title
-                    class="text-uppercase title"
-                    v-text="`${info.Title}:`"
-                  ></v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-action-text
-                  class="title"
-                  v-text="info.Data"
-                ></v-list-item-action-text>
-              </v-list-item>
-            </v-list>
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-card>
-  </v-dialog> -->
 </template>
 
 <script lang="ts">
@@ -153,6 +124,9 @@ export default Vue.extend({
     );
   },
   methods: {
+    Alert(): void {
+      alert("To Be Continued...");
+    },
     PlantChange(index: number): void {
       this.plantIndex = index;
     },
