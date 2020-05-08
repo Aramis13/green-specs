@@ -1,22 +1,5 @@
 <template>
   <v-row align="center" justify="center">
-    <!-- <v-file-input
-      show-size
-      accept="image/*"
-      label="Take Picture"
-      prepend-icon="mdi-camera"
-      @change="Upload"
-    ></v-file-input>
-    <v-layout v-if="showProgress" d-flex justify-center mt-12 display-1>
-      <v-progress-circular
-        rotate="-90"
-        color="primary"
-        size="300"
-        width="20"
-        :value="progress"
-        >{{ Progress }}</v-progress-circular
-      >
-    </v-layout> -->
     <v-btn
       @click="TakePicture"
       fab
@@ -50,20 +33,13 @@
       <v-icon size="200" color="white">mdi-glasses</v-icon></v-progress-circular
     >
     <svg
+      style="position: fixed;"
       v-if="url != null && !showProgress"
       height="100%"
       width="100%"
       :viewBox="ViewBox"
     >
-      <image
-        preserveAspectRatio="none"
-        x="0"
-        y="0"
-        height="100%"
-        width="100%"
-        style="overflow: visible;"
-        :xlink:href="url"
-      ></image>
+      <image :height="height" :width="width" :xlink:href="url"></image>
       <path
         v-for="(path, index) in paths"
         :key="index"
@@ -100,7 +76,10 @@ export default Vue.extend({
     showProgress: false as boolean,
     url: null as null | string,
     plants: null as null | Array<object>,
-    clicked: false as boolean
+    clicked: false as boolean,
+    image: new Image(),
+    width: 0 as number,
+    height: 0 as number
   }),
   created() {
     this.$root.$on("CloseDialog", () => {
@@ -112,7 +91,7 @@ export default Vue.extend({
       return Math.round(this.progress);
     },
     ViewBox() {
-      return `0 0 ${screen.width} ${screen.height}`;
+      return `0 0 ${this.width} ${this.height}`;
     }
   },
   methods: {
@@ -165,6 +144,13 @@ export default Vue.extend({
         },
         () => {
           storageRef.snapshot.ref.getDownloadURL().then(url => {
+            this.image.src = url;
+            if (this.image) {
+              this.image.onload = () => {
+                this.width = this.image.width;
+                this.height = this.image.height;
+              };
+            }
             this.picture = url;
             this.url = url;
             this.showProgress = false;
