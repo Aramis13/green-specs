@@ -5,6 +5,8 @@ import glob
 import numpy as np
 import algo
 
+import keys
+
 
 # global variable to keep track of
 # show = True
@@ -47,6 +49,8 @@ class Controller(object):
 def show_trackers(controller, params, num_ranges=3):
     orig_window_name = 'P-> Previous, N-> Next'
 
+    colors_dict = {v: k for k, v in keys.colors_types.items()}
+
     # creating windows to display images
     cv2.namedWindow(orig_window_name, cv2.WINDOW_NORMAL)  # Make the image resizable
     # cv2.namedWindow('Select', cv2.WINDOW_AUTOSIZE) # Fix the image size
@@ -79,13 +83,22 @@ def show_trackers(controller, params, num_ranges=3):
             sorted_contours = algo.get_region_image_from_image(current_image, **params)
 
             contours_image = np.zeros(current_image.shape[:2], dtype=np.uint8)
-            for color, contour in sorted_contours:
+            for color_level, contour in sorted_contours[2:]:
+                color = colors_dict[color_level] * 110 + 35
                 cv2.fillPoly(contours_image, pts=[np.array(contour)], color=(color, color, color))
+                # cv2.drawContours(contours_image, contour, -1, (color, color, color), 3)
+
+                while True:
+                    cv2.imshow(orig_window_name, contours_image)  # Show the results
+                    k = cv2.waitKey(1) & 0xFF
+                    if k == ord("b"):
+                        break
 
             # apply the overlay
             a = cv2.getTrackbarPos(f'Alpha', orig_window_name)
             alpha = a / 100
             output = cv2.addWeighted(cv2.cvtColor(contours_image, cv2.COLOR_GRAY2RGB), alpha, current_image, 1 - alpha, 0)
+            output = contours_image
 
         cv2.imshow(orig_window_name, output)  # Show the results
         k = cv2.waitKey(1) & 0xFF
