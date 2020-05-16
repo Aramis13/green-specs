@@ -1,13 +1,23 @@
+import keys
+
+
 def convert_to_svg(sorted_contours):
     # https://www.w3schools.com/graphics/svg_path.asp
     svg_paths = []
-    for idx, (shape_type, contour) in enumerate(sorted_contours):
-        _str_build = 'M'
-        for point in contour:
-            _str_build += f'{point[0][0]} {point[0][1]} L'
 
-        _str_build = _str_build[:-1] + 'Z'
-        path_obj = {"d":_str_build, "type":shape_type}
+    for color_num, cnts in sorted_contours.items():
+        paths_arr = []
+        for cnt in cnts:
+            _str_build = 'M '
+
+            for point in cnt[:, 0, :]:
+                _str_build += f'{point[0]},{point[1]} '
+
+            _str_build = _str_build[:-1] + ' Z'
+            paths_arr.append(_str_build)
+
+        layer_color_type = keys.colors_types[color_num]
+        path_obj = {"d": " ".join(paths_arr), "type": layer_color_type}
         svg_paths.append(path_obj)
 
     return svg_paths
