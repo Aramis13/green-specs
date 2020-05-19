@@ -7,8 +7,8 @@
     no-click-animation
   >
     <v-card class="hide-overflow">
-      <v-list-item>
-        <v-btn icon @click="Alert" class="mr-3">
+      <v-list-item class="px-2">
+        <v-btn icon class="mr-3" link @click="Alert">
           <v-icon color="primary" large>mdi-information-outline</v-icon></v-btn
         >
         <v-list-item-content>
@@ -26,79 +26,38 @@
         >
       </v-list-item>
 
-      <v-carousel
-        hide-delimiters
-        @change="PlantChange"
-        transition="fade-transition"
-        :height="$vuetify.breakpoint.xs ? '100%' : '500px'"
-      >
-        <v-carousel-item v-for="(plant, index) in dummyPlants" :key="index">
-          <v-img
-            :src="plant"
-            width="100%"
-            height="100%"
-            :contain="$vuetify.breakpoint.xs ? false : true"
-          ></v-img>
-        </v-carousel-item>
-      </v-carousel>
-
-      <v-card-actions class="justify-space-around">
-        <v-list>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title
-                class="title"
-                v-text="'Involvement:'"
-              ></v-list-item-title>
-            </v-list-item-content>
-            <v-list-item-action
-              ><v-rating
-                color="brown"
-                background-color="secondary"
-                full-icon="mdi-shovel"
-                empty-icon="mdi-shovel"
-                :value="3"
-                readonly
-              ></v-rating
-            ></v-list-item-action>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title
-                class="title"
-                v-text="'Size:'"
-              ></v-list-item-title>
-            </v-list-item-content>
-            <v-list-item-action
-              ><v-rating
-                color="accent"
-                background-color="secondary"
-                full-icon="mdi-tree"
-                empty-icon="mdi-tree-outline"
-                :value="1"
-                readonly
-              ></v-rating
-            ></v-list-item-action>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title
-                class="title"
-                v-text="'Price:'"
-              ></v-list-item-title>
-            </v-list-item-content>
-            <v-list-item-action
-              ><v-rating
-                color="green darken-4"
-                background-color="secondary"
-                full-icon="mdi-currency-usd-circle"
-                empty-icon="mdi-currency-usd-circle-outline"
-                :value="4"
-                readonly
-              ></v-rating
-            ></v-list-item-action>
-          </v-list-item>
-        </v-list>
+      <v-card-text class="px-2 py-2">
+        <v-carousel
+          hide-delimiters
+          @change="PlantChange"
+          transition="fade-transition"
+        >
+          <v-carousel-item
+            v-for="(plant, index) in plants"
+            :key="index"
+            :src="plant['Picture URL']"
+          >
+          </v-carousel-item>
+        </v-carousel>
+      </v-card-text>
+      <v-card-actions>
+        <v-row justify="center">
+          <template v-for="tag in tags">
+            <v-tooltip top :key="`tooltip${tag}`">
+              <template v-slot:activator="{ on }">
+                <v-chip
+                  :key="tag"
+                  class="mx-1"
+                  color="primary darken-1"
+                  v-on="on"
+                >
+                  <v-icon :key="`${tag}-icon`">{{ tag }}</v-icon>
+                </v-chip>
+              </template>
+              <span>{{ tagMeta[tag] }}</span>
+            </v-tooltip>
+          </template>
+        </v-row>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -109,26 +68,30 @@ import Vue from "vue";
 export default Vue.extend({
   props: ["dialog", "type", "plants"],
   data: () => ({
+    tags: [] as Array<string>,
+    tagMeta: {
+      "mdi-sovel": "DIY",
+      "food-apple": "Edible",
+      "mdi-skull-crossbones": "Danger",
+      "mdi-leaf": "Special leafs",
+      "mdi-flower": "Special Flowers"
+    },
     dummyPlants: [] as Array<string>,
     plantIndex: 0 as number
   }),
-  created() {
-    this.dummyPlants.push(
-      "https://firebasestorage.googleapis.com/v0/b/green-specs.appspot.com/o/78680062-afcc2880-78f3-11ea-9ef6-58f449f0f0e9.jpg?alt=media&token=7ab4fa76-3125-4716-b824-56ec0253c131"
-    );
-    this.dummyPlants.push(
-      "https://firebasestorage.googleapis.com/v0/b/green-specs.appspot.com/o/78680065-b0fd5580-78f3-11ea-96b3-4b10af69a73f.jpg?alt=media&token=9984703e-4b2e-4ccc-a70f-f10c9f72b5ca"
-    );
-    this.dummyPlants.push(
-      "https://firebasestorage.googleapis.com/v0/b/green-specs.appspot.com/o/78680068-b22e8280-78f3-11ea-8b4b-b79bd5e50f8f.jpg?alt=media&token=5e996da8-2511-4a78-a4b4-c6de631a82f5"
-    );
-  },
   methods: {
     Alert(): void {
-      alert("To Be Continued...");
+      window.open(this.plants[this.plantIndex]["Plant information link"]);
     },
     PlantChange(index: number): void {
       this.plantIndex = index;
+      this.tags = [];
+      const plant = this.plants[this.plantIndex];
+      if (plant["DIY"]) this.tags.push("mdi-sovel");
+      if (plant["Edible"]) this.tags.push("mdi-food-apple");
+      if (plant["Warnings"]) this.tags.push("mdi-skull-crossbones");
+      if (plant["Special leafs"]) this.tags.push("mdi-leaf");
+      if (plant["Special Flowers"]) this.tags.push("mdi-flower");
     },
     Close(): void {
       this.$root.$emit("CloseDialog");
