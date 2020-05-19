@@ -159,7 +159,7 @@ export default Vue.extend({
               // eslint-disable-next-line @typescript-eslint/camelcase
               pic_url: url
             }).then(response => {
-              this.paths = response.data.svg;
+              this.paths = response.data.svg.svg_paths;
               this.plants = response.data.plants;
             });
           });
