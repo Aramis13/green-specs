@@ -22,6 +22,9 @@ export default Vue.extend({
 </script>
 
 <style>
+html {
+  overflow-y: auto !important;
+}
 .wallpaper {
   height: 100% !important;
   width: inherit;
