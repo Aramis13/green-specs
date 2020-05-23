@@ -172,33 +172,32 @@ export default Vue.extend({
 
 <style scoped>
 path {
-  fill: transparent;
   transition: 1s;
   stroke-width: 1;
-  opacity: 1;
+  opacity: 0.3;
   cursor: pointer;
 }
 
 .path-low {
-  stroke: darkgreen;
+  fill: red;
+  stroke: red;
 }
 .path-med {
-  stroke: green;
+  fill: yellow;
+  stroke: yellow;
 }
 .path-high {
-  stroke: lightgreen;
+  fill: green;
+  stroke: green;
 }
 
 .path-low:hover {
-  fill: darkgreen;
   opacity: 0.7;
 }
 .path-med:hover {
-  fill: green;
   opacity: 0.7;
 }
 .path-high:hover {
-  fill: lightgreen;
   opacity: 0.7;
 }
 .glasses {
