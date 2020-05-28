@@ -74,7 +74,7 @@ import PlantInfo from "./PlantInfo.vue";
 export default Vue.extend({
   props: ["dialog", "type", "plants"],
   components: {
-    PlantInfo
+    PlantInfo,
   },
   data: () => ({
     tags: [] as Array<string>,
@@ -83,12 +83,12 @@ export default Vue.extend({
       "food-apple": "Edible",
       "mdi-skull-crossbones": "Danger",
       "mdi-leaf": "Special leafs",
-      "mdi-flower": "Special Flowers"
+      "mdi-flower": "Special Flowers",
     },
     dummyPlants: [] as Array<string>,
     plantIndex: 0 as number,
     plantInfoDialog: false as boolean,
-    selectedPlant: null as null | object
+    selectedPlant: {} as null | Record<string, unknown>,
   }),
   created() {
     this.$root.$on("ClosePlantInfo", () => {
@@ -113,20 +113,20 @@ export default Vue.extend({
     },
     Close(): void {
       this.$root.$emit("CloseDialog");
-    }
+    },
   },
   computed: {
-    PlantInfo() {
+    PlantInfo(): Array<Record<string, unknown>> {
       const info = [];
       for (const key in this.plants[this.plantIndex]) {
         info.push({
           Title: key,
-          Data: this.plants[this.plantIndex][key]
+          Data: this.plants[this.plantIndex][key],
         });
       }
       return info;
-    }
-  }
+    },
+  },
 });
 </script>
 

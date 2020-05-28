@@ -27,8 +27,8 @@ export default Vue.extend({
   methods: {
     Close(): void {
       this.$root.$emit("ClosePlantInfo");
-    }
-  }
+    },
+  },
 });
 </script>
 

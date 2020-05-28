@@ -9,7 +9,7 @@ import PictureBtn from "@/components/PictureBtn";
 export default {
   name: "Home",
   components: {
-    PictureBtn
-  }
+    PictureBtn,
+  },
 };
 </script>

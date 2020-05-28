@@ -16,7 +16,7 @@ if (process.env.NODE_ENV === "production") {
         registration.update();
       }, 1000 * 60 * 60); // e.g. hourly checks
     },
-    cached(registration) {
+    cached() {
       console.log("Content has been cached for offline use.");
     },
     updatefound() {
@@ -25,7 +25,7 @@ if (process.env.NODE_ENV === "production") {
     updated(registration) {
       console.log("New content is available; please refresh.");
       document.dispatchEvent(
-        new CustomEvent('swUpdated', { detail: registration })
+        new CustomEvent("swUpdated", { detail: registration })
       );
     },
     offline() {
@@ -35,6 +35,6 @@ if (process.env.NODE_ENV === "production") {
     },
     error(error) {
       console.error("Error during service worker registration:", error);
-    }
+    },
   });
 }

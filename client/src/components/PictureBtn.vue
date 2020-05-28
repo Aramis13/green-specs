@@ -14,7 +14,7 @@
     </v-btn>
     <input
       type="file"
-      style="display: none"
+      style="display: none;"
       ref="image"
       accept="image/*"
       @change="Upload"
@@ -65,21 +65,21 @@ import "firebase/storage";
 import PlantsListModal from "./PlantsListModal.vue";
 export default Vue.extend({
   components: {
-    PlantsListModal
+    PlantsListModal,
   },
   data: () => ({
     dialog: false as boolean,
     selectedType: null as null | string,
     picture: "" as string,
-    paths: [] as Array<object>,
+    paths: [] as Array<Record<string, unknown>>,
     progress: 0 as number,
     showProgress: false as boolean,
     url: null as null | string,
-    plants: null as null | Array<object>,
+    plants: null as null | Array<Record<string, unknown>>,
     clicked: false as boolean,
     image: new Image(),
     width: 0 as number,
-    height: 0 as number
+    height: 0 as number,
   }),
   created() {
     this.$root.$on("CloseDialog", () => {
@@ -90,9 +90,9 @@ export default Vue.extend({
     Progress(): number {
       return Math.round(this.progress);
     },
-    ViewBox() {
+    ViewBox(): string {
       return `0 0 ${this.width} ${this.height}`;
-    }
+    },
   },
   methods: {
     TakePicture(): void {
@@ -128,22 +128,19 @@ export default Vue.extend({
       this.clicked = true;
       const image = (e.target as HTMLFormElement).files[0];
       this.showProgress = true;
-      const storageRef = firebase
-        .storage()
-        .ref(image.name)
-        .put(image);
+      const storageRef = firebase.storage().ref(image.name).put(image);
       storageRef.on(
         `state_changed`,
-        snapshot => {
+        (snapshot) => {
           this.progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         },
-        error => {
+        (error) => {
           console.log(error.message);
           alert(error.message);
         },
         () => {
-          storageRef.snapshot.ref.getDownloadURL().then(url => {
+          storageRef.snapshot.ref.getDownloadURL().then((url) => {
             this.image.src = url;
             if (this.image) {
               this.image.onload = () => {
@@ -156,17 +153,16 @@ export default Vue.extend({
             this.showProgress = false;
             Axios.post(`${process.env.VUE_APP_SERVER_URL}/analyze`, {
               id: 1,
-              // eslint-disable-next-line @typescript-eslint/camelcase
-              pic_url: url
-            }).then(response => {
+              pic_url: url,
+            }).then((response) => {
               this.paths = response.data.svg.svg_paths;
               this.plants = response.data.plants;
             });
           });
         }
       );
-    }
-  }
+    },
+  },
 });
 </script>
 

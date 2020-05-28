@@ -20,22 +20,26 @@
   </v-app>
 </template>
 
-<script>
+<script lang="ts">
 import Vue from "vue";
 export default Vue.extend({
   name: "App",
 
   data() {
     return {
-      refreshing: false,
-      registration: null,
-      updateExists: false
+      refreshing: false as boolean,
+      registration: null as null | ServiceWorkerRegistration,
+      updateExists: false as boolean,
     };
   },
 
   created() {
     // Listen for swUpdated event and display refresh snackbar as required.
-    document.addEventListener("swUpdated", this.showRefreshUI, { once: true });
+    document.addEventListener(
+      "swUpdated",
+      this.showRefreshUI as EventListener,
+      { once: true }
+    );
     // Refresh all open app tabs when a new service worker is installed.
     navigator.serviceWorker.addEventListener("controllerchange", () => {
       if (this.refreshing) return;
@@ -44,7 +48,7 @@ export default Vue.extend({
     });
   },
   methods: {
-    showRefreshUI(e) {
+    showRefreshUI(e: CustomEvent): void {
       // Display a button inviting the user to refresh/reload the app due
       // to an app update being available.
       // The new service worker is installed, but not yet active.
@@ -52,16 +56,14 @@ export default Vue.extend({
       this.registration = e.detail;
       this.updateExists = true;
     },
-    refreshApp() {
+    refreshApp(): void {
       // Handle a user tap on the update app button.
       this.updateExists = false;
       // Protect against missing registration.waiting.
-      if (!this.registration || !this.registration.waiting) {
-        return;
-      }
+      if (!this.registration || !this.registration.waiting) return;
       this.registration.waiting.postMessage("skipWaiting");
-    }
-  }
+    },
+  },
 });
 </script>
 
