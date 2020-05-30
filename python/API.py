@@ -74,9 +74,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.debug is True:
-        # print('http://127.0.0.1:5000/?image_url=https://i2-prod.gazettelive.co.uk/incoming/article15432228.ece/ALTERNATES/s615/0_DRR_MGA__181118MGAklmJPG.jpg')
-        print('http://127.0.0.1:5000/?image_url=https://firebasestorage.googleapis.com/v0/b/green-specs.appspot.com/o/WhatsApp%20Image%202020-04-10%20at%2017.49.29.jpeg?alt=media&token=527d2725-12de-4dc0-9d2c-ef5541fda84c')
-        print('http://127.0.0.1:5000/calc?image_url=https://firebasestorage.googleapis.com/v0/b/green-specs.appspot.com/o/WhatsApp%20Image%202020-04-10%20at%2017.49.29.jpeg?alt=media&token=527d2725-12de-4dc0-9d2c-ef5541fda84c')
+        print('http://127.0.0.1:5000/debug?image_url=https://i2-prod.gazettelive.co.uk/incoming/article15432228.ece/ALTERNATES/s615/0_DRR_MGA__181118MGAklmJPG.jpg')
+        print('http://127.0.0.1:5000/debug?image_url=https://firebasestorage.googleapis.com/v0/b/green-specs.appspot.com/o/WhatsApp%20Image%202020-04-10%20at%2017.49.29.jpeg?alt=media&token=527d2725-12de-4dc0-9d2c-ef5541fda84c')
         print('http://127.0.0.1:5000/debug?image_url=https://i2-prod.gazettelive.co.uk/incoming/article15432228.ece/ALTERNATES/s615/0_DRR_MGA__181118MGAklmJPG.jpg')
         print('http://127.0.0.1:5000/debug?image_url=https://i.ibb.co/HCscpVH/BW.jpg')
         print('http://127.0.0.1:5000/debug?image_url=https://i.ibb.co/bQxhCQY/1.jpg')
