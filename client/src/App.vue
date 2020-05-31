@@ -7,12 +7,11 @@
             color="primary"
             v-if="updateExists"
             @click="refreshApp"
-            fixed
+            absolute
             top
             right
             ><v-icon left>mdi-update</v-icon>Update</v-btn
           >
-          <div v-if="updateExists">This is a test</div>
           <router-view></router-view>
         </v-container>
       </v-content>

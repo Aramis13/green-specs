@@ -14,7 +14,7 @@
       >
       <v-divider />
       <v-card-text
-        ><span class="title">{{ plant.Story }}</span>
+        ><span class="title">{{ plant["why me?"] }}</span>
       </v-card-text>
     </v-card>
   </v-dialog>

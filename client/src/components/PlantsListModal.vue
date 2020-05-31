@@ -84,6 +84,13 @@ export default Vue.extend({
       "mdi-skull-crossbones": "Danger",
       "mdi-leaf": "Special leafs",
       "mdi-flower": "Special Flowers",
+      "mdi-sprout": "Small plant",
+      "mdi-spa": "Medium plant",
+      "mdi-tree": "Large plant",
+      "mdi-weather-rainy": "Low irrigation",
+      "mdi-weather-pouring": "High irrigation",
+      "mdi-cloud-refresh": "Seasonal",
+      "mdi-circle-slice-2": "Annual",
     },
     dummyPlants: [] as Array<string>,
     plantIndex: 0 as number,
@@ -110,6 +117,13 @@ export default Vue.extend({
       if (plant["Warnings"]) this.tags.push("mdi-skull-crossbones");
       if (plant["Special leafs"]) this.tags.push("mdi-leaf");
       if (plant["Special Flowers"]) this.tags.push("mdi-flower");
+      if (plant["Small plant"]) this.tags.push("mdi-sprout");
+      if (plant["Medium plant"]) this.tags.push("mdi-spa");
+      if (plant["Large plant"]) this.tags.push("mdi-tree");
+      if (plant["Low irrigation"]) this.tags.push("mdi-weather-rainy");
+      if (plant["High irrigation"]) this.tags.push("mdi-weather-pouring");
+      if (plant["Seasonal"]) this.tags.push("mdi-cloud-refresh");
+      if (plant["Annual"]) this.tags.push("mdi-circle-slice-2");
     },
     Close(): void {
       this.$root.$emit("CloseDialog");
