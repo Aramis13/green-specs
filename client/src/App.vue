@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-parallax src="./assets/background.jpg" class="wallpaper pa-0">
-      <v-content>
+      <v-main>
         <v-container fill-height fluid pa-0 ma-0>
           <v-btn
             color="primary"
@@ -14,7 +14,7 @@
           >
           <router-view></router-view>
         </v-container>
-      </v-content>
+      </v-main>
     </v-parallax>
   </v-app>
 </template>
